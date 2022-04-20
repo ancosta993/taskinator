@@ -214,6 +214,55 @@ var saveTasks = function(){
    localStorage.setItem('tasks', JSON.stringify(tasks));
 };
 
+var loadTasks = function(){
+   // get task items from localStorage
+   tasks = localStorage.getItem("tasks");
+   console.log(tasks);
+
+   // if the returned data is null then do the following
+   if (!tasks){
+      tasks = [];
+      return false;
+   }
+   // convert the string to objects
+   tasks = JSON.parse(tasks);
+   // create tasks using the objects in the array
+   for (var i=0; i<tasks.length; i++){
+      taskIdCounter = tasks[i].id;
+      var listItemEl = document.createElement("li");
+      listItemEl.className = 'task-item';
+      listItemEl.setAttribute("data-task-id", tasks[i].id);
+      
+      // create task name and type dic
+      var taskInfoEl = document.createElement("div");
+      taskInfoEl.className = "task-info";
+      taskInfoEl.innerHTML = "<h3 class='task-name'>" + tasks[i].name + "</h3> <span class='task-type'>" + tasks[i].type + "</span>";
+      listItemEl.appendChild(taskInfoEl);
+
+      // Creating the task actions
+      var taskActionsEl = document.createElement("div");
+      taskActionsEl= createTaskActions(tasks[i].id);
+      listItemEl.appendChild(taskActionsEl);
+
+      // checking status
+      if (tasks[i].status.toLowerCase() === "to do"){
+         listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
+         tasksToDoEl.appendChild(listItemEl);
+      } else if (tasks[i].status.toLowerCase() === "in progress"){
+         listItemEl.querySelector("select[name='status-change']").selectedIndex = 1;
+         tasksInProgressEl.appendChild(listItemEl);
+      } else if (tasks[i].status.toLowerCase() === "completed"){
+         listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
+         tasksCompletedEl.appendChild(listItemEl);
+      }
+      taskIdCounter++;
+      console.log(listItemEl);
+
+   };
+
+};
+
+loadTasks();
 pageContentEl.addEventListener('click',taskButtonHandler);
 pageContentEl.addEventListener('change', taskStatusChangeHandler);
 
